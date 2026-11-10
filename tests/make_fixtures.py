@@ -57,10 +57,9 @@ A4 = (595.28, 841.89)
 
 
 def _draw_slide(page: pymupdf.Page, i: int) -> None:
-    """Made-up slide content: a title band, a large "S{i}", a circle and a square."""
+    """Made-up slide content: a colour band, a large "S{i}" (the only text), a circle and a square."""
     w, h = page.rect.width, page.rect.height
     page.draw_rect(pymupdf.Rect(0, 0, w, h * 0.12), color=None, fill=[c / 255 for c in COLOURS[2]])
-    page.insert_text((w * 0.03, h * 0.08), "Example deck", fontsize=h * 0.05, color=(1, 1, 1))
     page.insert_text((w * 0.06, h * 0.55), f"S{i}", fontsize=h * 0.25)
     side = h * 0.28
     page.draw_circle((w * 0.6, h * 0.65), side / 2, color=None, fill=[c / 255 for c in COLOURS[i % 4]])
@@ -80,6 +79,71 @@ def deck_pdf(path: Path, n: int = 7, size: tuple[float, float] = (720, 405)) -> 
 def paper_deck_pdf(path: Path, n: int = 3, paper: str = "a4") -> Path:
     """One slide per page, but the deck was set to a paper size, with no frames."""
     return deck_pdf(path, n, A4 if paper == "a4" else (612, 792))
+
+
+def _grid(per_page: int):
+    """Frame rects on an A4 page. 3 per page copies the reference handout's geometry."""
+    if per_page == 3:
+        return [pymupdf.Rect(98, y, 98 + 190, y + 107) for y in (128, 367, 606)]
+    cols = 1 if per_page <= 2 else 2
+    rows = per_page // cols
+    w = 400 if cols == 1 else 240
+    h = w * 9 / 16
+    return [pymupdf.Rect(50 + c * (w + 30), 80 + r * (h + 60), 50 + c * (w + 30) + w, 80 + r * (h + 60) + h)
+            for r in range(rows) for c in range(cols)]
+
+
+def handout_pdf(path: Path, n: int = 7, per_page: int = 3, numbers: bool = True, order: str = "rows",
+                panel: bool = False, start: int = 1, skip: tuple = (), broken: str | None = None,
+                jitter: bool = False) -> Path:
+    """A fake exporter handout: framed slides, printed numbers below each frame."""
+    path = Path(path)
+    deck = pymupdf.open(deck_pdf(path.with_suffix(".deck.pdf"), n=n))
+    printed = [k for k in range(start, start + n + len(skip)) if k not in skip][:n]
+    if broken == "repeat":
+        printed[3] = printed[2]
+    if broken == "down":
+        printed = [4, 5, 6, 1, 2, 3, 7][:n]
+    slots = _grid(per_page)
+    rows = len({round(r.y0) for r in slots})
+    if order == "columns":  # fill down each column first
+        slots = sorted(slots, key=lambda r: (r.x0, r.y0))
+    sizes = [per_page] * (n // per_page) + ([n % per_page] if n % per_page else [])
+    if broken == "counts":
+        sizes = [per_page, per_page - 1] + [per_page] * 5
+    out, i = pymupdf.open(), 0
+    for count in sizes:
+        if i >= n:
+            break
+        page = out.new_page(width=A4[0], height=A4[1])
+        for k, frame in enumerate(slots[:min(count, n - i)]):
+            if broken == "overlap" and k == 1:
+                frame = pymupdf.Rect(frame.x0, slots[0].y0 + 40, frame.x1, slots[0].y0 + 40 + frame.height)
+            page.show_pdf_page(frame + (1, 1, -1, -1), deck, i)
+            if jitter and page.number == 1 and k == 1:  # real exports: a frame drawn 2 pt wider
+                frame = frame + (0, 0, 2, 0)
+            page.draw_rect(frame, color=(0, 0, 0), width=1)
+            if jitter and page.number == 1 and k == 0:  # real slides: a slide-sized shape 2 pt below the frame
+                page.draw_rect(frame + (0, 2, 0, 2), color=(0.8, 0.8, 0.8), width=0.5)
+            if panel:
+                page.draw_rect(frame + (frame.width * 0.1, frame.height * 0.1, -frame.width * 0.1, -frame.height * 0.1),
+                               color=(0.5, 0.5, 0.5), width=0.5)
+            if numbers:
+                page.insert_text((frame.x0, frame.y1 + 12), str(printed[i]), fontsize=9)
+            i += 1
+    assert rows >= 1
+    out.save(str(path))
+    return path
+
+
+def scanned_handout_pdf(path: Path) -> Path:
+    """A handout page that is one picture, as a scan would be."""
+    source = pymupdf.open(handout_pdf(Path(path).with_suffix(".source.pdf"), n=3))
+    pix = source[0].get_pixmap(dpi=100)
+    out = pymupdf.open()
+    out.new_page(width=A4[0], height=A4[1]).insert_image(pymupdf.Rect(0, 0, *A4), pixmap=pix)
+    out.save(str(path))
+    return Path(path)
 
 
 def encrypted_pdf(path: Path) -> Path:
