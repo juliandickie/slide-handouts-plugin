@@ -14,7 +14,7 @@ The slides stay sharp at any size, because they are placed as they are, never tu
 
 ## Install
 
-You need Claude Code, in the terminal or in the Code tab of the Claude desktop app. The plugin is tested on macOS. Windows is expected to work but is not yet tested, and Linux should work but is not tested.
+You need Claude Code, in the terminal or in the Code tab of the Claude desktop app. The plugin is tested on macOS. Windows is expected to work but is not yet tested, and Linux should work but is not tested. On an Intel Mac or a Windows computer with an ARM processor, the PDF library has no ready-made build, so the first run needs developer tools to build it.
 
 ### Step 1 - install uv
 
@@ -36,17 +36,31 @@ Then close and reopen the terminal.
 
 ### Step 2 - add the plugin in the terminal
 
+Slide Handouts is listed in the loadout catalogue.
+
 1. Start Claude Code.
-2. Type `/plugin marketplace add juliandickie/slide-handouts-plugin` and press Return.
-3. Type `/plugin install slide-handouts@slide-handouts-plugin` and press Return.
+2. Type `/plugin marketplace add juliandickie/ai-loadout` and press Return.
+3. Type `/plugin install slide-handouts@loadout` and press Return.
 4. Quit Claude Code and start it again.
+
+Or install it straight from this repository, which carries its own single-plugin marketplace:
+
+```
+/plugin marketplace add juliandickie/slide-handouts-plugin
+/plugin install slide-handouts@slide-handouts-plugin
+```
+
+One copy is enough. Installing from two marketplaces gives you two copies of the skill.
 
 ### Step 2 - or add the plugin in the Claude desktop app
 
-1. Open the Code tab.
-2. Type `/plugin marketplace add juliandickie/slide-handouts-plugin` and press Return.
-3. Type `/plugin install slide-handouts@slide-handouts-plugin` and press Return.
-4. Quit the Claude desktop app and open it again.
+1. Open Settings, then Customize, then Plugins. In a Code tab session, typing `/plugin` opens the same screen.
+2. Click Add, then Add marketplace, then Add from a repository.
+3. In the URL box, type `juliandickie/ai-loadout`, then click Sync.
+4. Click Discover, find Slide handouts, and click Add to this computer.
+5. Start a new session in the Code tab.
+
+A plugin added in the terminal also appears in the desktop app, and the other way round, because both read the same settings.
 
 ## Using it
 

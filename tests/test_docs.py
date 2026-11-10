@@ -32,3 +32,15 @@ def test_guide_images_exist_and_readme_links_the_guide():
 def test_changelog_has_the_current_version():
     version = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())["version"]
     assert f"## {version}" in (ROOT / "CHANGELOG.md").read_text()
+
+
+def test_readme_install_commands_match_the_manifests():
+    # Julian, 2026-11-10: people install from the loadout catalogue (juliandickie/ai-loadout), or from this repository.
+    plugin = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text())["name"]
+    market = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())["name"]
+    readme = (ROOT / "README.md").read_text()
+    for command in ("/plugin marketplace add juliandickie/ai-loadout", f"/plugin install {plugin}@loadout",
+                    "/plugin marketplace add juliandickie/slide-handouts-plugin", f"/plugin install {plugin}@{market}"):
+        assert command in readme, command
+    for label in ("Add marketplace", "Add from a repository", "Add to this computer"):  # the desktop app's own words
+        assert label in readme, label
