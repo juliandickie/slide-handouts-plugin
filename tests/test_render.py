@@ -76,6 +76,19 @@ def test_low_resolution_photo_is_flagged(tmp_path):
     assert res.low_res == [3]
 
 
+@pytest.mark.parametrize("px, flagged", [(505, False), (374, True)])
+def test_photo_warning_line_is_120_ppi(tmp_path, px, flagged):
+    # The photo spans half of a slide placed 190 mm wide: 95 mm, so 505 px prints at 135 ppi and 374 px at 100 ppi.
+    doc = pymupdf.open()
+    page = doc.new_page(width=720, height=405)
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, px, px // 2), False)
+    pix.set_rect(pix.irect, (200, 60, 60))
+    page.insert_image(pymupdf.Rect(0, 0, 360, 180), pixmap=pix)
+    doc.save(str(tmp_path / "p.pdf"))
+    res, _ = build(tmp_path, src=tmp_path / "p.pdf", per_page=2, notes="under", size=190.0)
+    assert (res.low_res == [1]) is flagged
+
+
 def test_labels_keep_their_font_when_the_slides_also_use_helvetica(tmp_path):
     # The made-up slides set "S1" in PyMuPDF's "helv" too. That name must not hide the labels' own font.
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=4))

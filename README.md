@@ -173,7 +173,7 @@ Saved layouts live on your own computer, in `~/.config/slide-handouts/layouts.js
 
 **Mac and Windows.** Handout detection was tested on exports from PowerPoint and Keynote for Mac. PowerPoint for Windows is expected to give the same handouts, but this is not yet tested. The plugin is expected to work on Windows, but it is not yet tested there.
 
-**Photos that may print soft.** If a photo would print at under 150 pixels per inch at its new size, Claude names the slides it is on. The handout is still made. A fresh export from the original deck may be sharper.
+**Photos that may print soft.** If a photo would print at under 120 pixels per inch at its new size, Claude names the slides it is on. The handout is still made. A fresh export from the original deck may be sharper.
 
 **Your files are safe.** The plugin never changes your file and never replaces an earlier handout. A new handout with a name that is already taken gets `_v2`, `_v3` and so on.
 

@@ -18,8 +18,12 @@ def test_larger_beside_portrait_matches_delivered_stack():
     assert abs(plan_page(opts(), R).slide_width_mm - 145) <= 0.5
 
 
-def test_larger_beside_landscape_matches_delivered_landscape():
-    assert abs(plan_page(opts(orientation="landscape"), R).slide_width_mm - 108.6) <= 0.5
+def test_larger_beside_landscape_fills_the_height_with_5mm_gaps():
+    # Julian raised the minimum gap from 4 to 5 mm on 2026-11-10, so this is no longer the delivered 108.6 mm.
+    lay = plan_page(opts(orientation="landscape"), R)
+    assert abs(lay.slide_width_mm - 107.4) <= 0.1
+    gaps = [b.slide.y0 - a.slide.y1 for a, b in zip(lay.cells, lay.cells[1:])]
+    assert min(gaps) >= 5 * 72 / 25.4 - 0.01
 
 
 def test_larger_under_two_per_page_matches_delivered_two():

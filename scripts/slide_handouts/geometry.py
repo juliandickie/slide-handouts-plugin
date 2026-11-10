@@ -6,7 +6,7 @@ import pymupdf
 MM = 72 / 25.4
 PAPER = {"a4": (595.28, 841.89), "letter": (612.0, 792.0)}  # portrait width, height in pt
 MARGIN = 10 * MM
-GAP = 4 * MM            # minimum gap between cells
+GAP = 5 * MM            # minimum gap between cells (Julian raised it from 4 mm, 2026-11-10)
 BESIDE_GAP = 5 * MM     # slide edge to notes beside it
 BESIDE_MIN = 40 * MM    # narrowest notes beside a slide
 UNDER_GAP = 4 * MM      # slide bottom to notes under it
@@ -139,7 +139,7 @@ def check_layout(layout: PageLayout, opts: LayoutOptions) -> list[str]:
     for upper, lower in zip(tops, tops[1:]):
         bottom = max(max([c.slide.y1] + [n.y1 for n in c.notes]) for c in rows[upper])
         if min(c.slide.y0 for c in rows[lower]) - bottom < GAP - TOL:
-            problems.append("rows are closer than 4 mm")
+            problems.append(f"rows are closer than {GAP / MM:g} mm")
         if min(c.label.y0 for c in rows[lower]) - bottom < LABEL_CLEAR - TOL:
             problems.append("a label sits too close to the cell above it")
     for i, cell in enumerate(layout.cells, 1):

@@ -13,7 +13,7 @@ LINE = (0.73, 0.73, 0.73)
 LABEL = (0.43, 0.43, 0.43)          # #6E6E6E, 4.5 to 1 on white
 LABEL_COLOUR_INT = 0x6E6E6E
 FIELD_TEXT = (0.13, 0.13, 0.13)
-LOW_PPI = 150
+LOW_PPI = 120  # Julian lowered it from 150 on 2026-11-10: at 150, half of a real deck was flagged
 LABEL_RE = re.compile(r"^Slide (-?\d+)$")
 
 
