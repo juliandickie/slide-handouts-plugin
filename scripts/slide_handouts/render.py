@@ -97,10 +97,17 @@ def build_handout(src: pymupdf.Document, det: Detection, opts: LayoutOptions, ou
     for start in range(0, len(det.slides), opts.per_page):
         page = doc.new_page(width=layout.width, height=layout.height)
         areas = [layout.column] if layout.column is not None else []
-        for cell, slide in zip(layout.cells, det.slides[start:start + opts.per_page]):
+        cells = list(zip(layout.cells, det.slides[start:start + opts.per_page]))
+        # Text goes on first: once a placed slide holds a font named "helv", insert_text adds no font to the page.
+        for cell, slide in cells:
+            _label(page, cell.slide, slide.number)
+        number = str(page.number + 1)
+        width = pymupdf.get_text_length(number, fontname="helv", fontsize=8)
+        page.insert_text((layout.width - MARGIN - width, layout.height - MARGIN / 2 + 3), number,
+                         fontsize=8, fontname="helv", color=LABEL)
+        for cell, slide in cells:
             page.show_pdf_page(cell.slide, src, slide.page, clip=slide.clip)
             page.draw_rect(cell.slide, color=BORDER, width=0.5)
-            _label(page, cell.slide, slide.number)
             if box:
                 _box(page, cell.notes[0], slide.number, digits)
             else:
@@ -108,10 +115,6 @@ def build_handout(src: pymupdf.Document, det: Detection, opts: LayoutOptions, ou
             if _low_res(src, slide, cell.slide, cache):
                 low_res.append(slide.number)
         _marks(page, areas, opts.style, spacing)
-        number = str(page.number + 1)
-        width = pymupdf.get_text_length(number, fontname="helv", fontsize=8)
-        page.insert_text((layout.width - MARGIN - width, layout.height - MARGIN / 2 + 3), number,
-                         fontsize=8, fontname="helv", color=LABEL)
     if box:
         doc.need_appearances(True)
     doc.set_metadata({"title": title, "author": (src.metadata or {}).get("author") or ""})

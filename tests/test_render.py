@@ -76,6 +76,15 @@ def test_low_resolution_photo_is_flagged(tmp_path):
     assert res.low_res == [3]
 
 
+def test_labels_keep_their_font_when_the_slides_also_use_helvetica(tmp_path):
+    # The made-up slides set "S1" in PyMuPDF's "helv" too. That name must not hide the labels' own font.
+    _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=4))
+    page = pymupdf.open(out)[0]
+    spans = [s for b in page.get_text("dict")["blocks"] for l in b.get("lines", []) for s in l["spans"]]
+    labels = [s for s in spans if s["text"].startswith("Slide ") or s["text"] == "1"]
+    assert len(labels) == 4 and all(s["font"] == "Helvetica" for s in labels)
+
+
 def test_title_and_author(tmp_path):
     _, out = build(tmp_path)
     assert pymupdf.open(out).metadata["title"] == "Test - Slides and Notes"
