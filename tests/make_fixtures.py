@@ -146,6 +146,24 @@ def scanned_handout_pdf(path: Path) -> Path:
     return Path(path)
 
 
+def pptx_stub(path: Path, hidden: list, order: list | None = None) -> Path:
+    """A .pptx holding only the parts the hidden-slide reader opens. hidden[k-1] is slide k's flag."""
+    import zipfile
+    p = "http://schemas.openxmlformats.org/presentationml/2006/main"
+    r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    order = order or list(range(1, len(hidden) + 1))
+    ids = "".join(f'<p:sldId id="{255 + k}" r:id="rId{k}"/>' for k in order)
+    rels = "".join(f'<Relationship Id="rId{k}" Type="{r}/slide" Target="slides/slide{k}.xml"/>' for k in order)
+    with zipfile.ZipFile(path, "w") as z:
+        z.writestr("ppt/presentation.xml", f'<p:presentation xmlns:p="{p}" xmlns:r="{r}"><p:sldIdLst>{ids}</p:sldIdLst></p:presentation>')
+        z.writestr("ppt/_rels/presentation.xml.rels",
+                   f'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">{rels}</Relationships>')
+        for k, flag in enumerate(hidden, 1):
+            show = ' show="0"' if flag else ""
+            z.writestr(f"ppt/slides/slide{k}.xml", f'<p:sld xmlns:p="{p}"{show}/>')
+    return Path(path)
+
+
 def encrypted_pdf(path: Path) -> Path:
     doc = pymupdf.open(deck_pdf(Path(path).with_suffix(".plain.pdf"), n=2))
     doc.save(str(path), encryption=pymupdf.PDF_ENCRYPT_AES_256, user_pw="secret", owner_pw="owner")
