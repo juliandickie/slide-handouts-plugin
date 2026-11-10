@@ -163,7 +163,7 @@ Saved layouts live on your own computer, in `~/.config/slide-handouts/layouts.js
 
 ## Things to know
 
-**Typed notes.** In a typeable box, notes scroll when they run past the box on screen. A printed copy shows only what fits in the box.
+**Typed notes.** In a typeable box, notes scroll when they run past the box on screen. A printed copy shows only what fits in the box. Typing notes and saving them was tested in Preview, Adobe Acrobat and Chrome's PDF viewer on a Mac.
 
 **Slide numbers and hidden slides.** Each slide is labelled "Slide N". In a PowerPoint handout PDF, the numbers are the ones PowerPoint printed, so they skip hidden slides. Keynote numbers its handout slides 1, 2, 3 and so on over the slides it shows, so its numbers do not count skipped slides. In a PDF with one slide per page, slides are numbered in page order. To keep each slide's number from the original deck when it has hidden slides, give Claude the PowerPoint file as well as the PDF.
 
