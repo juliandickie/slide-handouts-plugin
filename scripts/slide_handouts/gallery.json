@@ -1,0 +1,15 @@
+{
+  "layouts": {
+    "example 1": ["--paper", "a4", "--orientation", "portrait", "--per-page", "2", "--notes", "under", "--style", "lines", "--spacing", "8", "--size", "larger"],
+    "example 2": ["--paper", "a4", "--orientation", "portrait", "--per-page", "3", "--notes", "both", "--style", "lines", "--spacing", "8", "--size", "108"],
+    "example 3": ["--paper", "a4", "--orientation", "landscape", "--per-page", "3", "--notes", "beside", "--style", "lines", "--spacing", "8", "--size", "larger"],
+    "example 4": ["--paper", "a4", "--orientation", "portrait", "--per-page", "3", "--notes", "beside", "--style", "lines", "--spacing", "8", "--size", "larger"],
+    "example 5": ["--paper", "a4", "--orientation", "portrait", "--per-page", "3", "--notes", "beside", "--style", "box", "--size", "larger"],
+    "example 6": ["--paper", "a4", "--orientation", "landscape", "--per-page", "3", "--notes", "beside", "--style", "dots", "--spacing", "5", "--size", "smaller"],
+    "example 7": ["--paper", "letter", "--orientation", "portrait", "--per-page", "1", "--notes", "under", "--style", "lines", "--spacing", "7", "--size", "medium"],
+    "example 8": ["--paper", "letter", "--orientation", "landscape", "--per-page", "2", "--notes", "beside", "--style", "blank", "--size", "medium"],
+    "example 9": ["--paper", "a4", "--orientation", "portrait", "--per-page", "4", "--notes", "under", "--style", "dots", "--spacing", "6", "--size", "larger"],
+    "example 10": ["--paper", "letter", "--orientation", "portrait", "--per-page", "6", "--notes", "under", "--style", "box", "--size", "medium"],
+    "example 11": ["--paper", "a4", "--orientation", "landscape", "--per-page", "4", "--notes", "both", "--style", "lines", "--spacing", "6", "--size", "medium"]
+  }
+}
