@@ -76,7 +76,7 @@ If you have a PowerPoint, Keynote or Google Slides deck, export it to PDF first.
 
 **Spacing.** For lines and dots, the gap between them, from 4 to 12 mm. Narrow is 6 mm, medium is 7 mm and wide is 8 mm, and any value in between works. Wider spacing suits larger handwriting and gives fewer lines.
 
-**Slide size.** Smaller, medium or larger, or an exact width in millimetres. Larger is the biggest slide that still leaves room for notes. Medium is 85 percent of that width, and smaller is 70 percent. Bigger slides are easier to read and leave less room to write. Slides under 70 mm wide still build, with a note that small text may be hard to read.
+**Slide size.** Smaller, medium or larger, or an exact width in millimetres. Larger is the biggest slide that still leaves room for notes. Medium is 85 percent of that width, and smaller is 70 percent. Bigger slides are easier to read and leave less room to write. With notes beside the slides, the slides spread down the page, so smaller slides have wider gaps between them. Slides under 70 mm wide still build, with a note that small text may be hard to read.
 
 ## Gallery
 
