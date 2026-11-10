@@ -46,8 +46,20 @@ def test_permission_refusal_names_the_setting(monkeypatch, tmp_path):
         convert(deck)
 
 
+def test_windows_script_goes_in_the_private_work_folder(tmp_path, monkeypatch):
+    commands = []
+    monkeypatch.setattr(convert_module.sys, "platform", "win32")
+    monkeypatch.setattr(convert_module.subprocess, "run", lambda cmd, **k: commands.append(cmd))
+    work, decks = tmp_path / "work", tmp_path / "decks"
+    work.mkdir()
+    decks.mkdir()
+    convert_module._run("PowerPoint", decks / "talk.pptx", decks / "talk (landing).pdf", work)
+    script = Path(commands[0][commands[0].index("-File") + 1])
+    assert script.parent == work and not any(p.suffix == ".ps1" for p in decks.iterdir())
+
+
 def _fake_app(writes: bytes | None, timeout: bool = False):
-    def run(app, src, landing):
+    def run(app, src, landing, work):
         if writes is not None:
             landing.write_bytes(writes)
         if timeout:

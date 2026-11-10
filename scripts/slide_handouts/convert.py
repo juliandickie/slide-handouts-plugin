@@ -73,10 +73,11 @@ def sweep_old_temp(now: float | None = None) -> None:
             pass
 
 
-def _run(app: str, src: Path, out: Path) -> subprocess.CompletedProcess:
-    # Paths go in as arguments, never pasted into the script text.
+def _run(app: str, src: Path, out: Path, work: Path) -> subprocess.CompletedProcess:
+    # Paths go in as arguments, never pasted into the script text. The PowerShell script lives in the private
+    # work folder from mkdtemp, never beside the deck, where someone else could swap it.
     if sys.platform == "win32":
-        script = out.parent / "convert.ps1"
+        script = work / "convert.ps1"
         script.write_text(WINDOWS_SCRIPT, encoding="utf-8")
         command = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script), str(src), str(out)]
         return subprocess.run(command, capture_output=True, text=True, timeout=TIMEOUT)
@@ -110,7 +111,7 @@ def convert(src: Path) -> tuple:
     for app in apps:
         landing = _landing(src)
         try:
-            result = _run(app, src, landing)
+            result = _run(app, src, landing, work)
         except subprocess.TimeoutExpired:
             result = None
             errors.append(f"{app} did not finish within {TIMEOUT} seconds. It may be waiting for you to allow "
