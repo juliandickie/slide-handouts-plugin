@@ -9,7 +9,8 @@ from .detect import Detection
 from .geometry import MARGIN, MM, LayoutOptions, check_layout, plan_page
 
 BORDER = (0.70, 0.70, 0.70)
-LINE = (0.25, 0.25, 0.25)          # 75% black, dark charcoal (Julian, 2026-11-10)
+LINE = (0.25, 0.25, 0.25)          # dotted lines and dots: 75% black, dark charcoal (Julian, 2026-11-10)
+SOLID = (0.73, 0.73, 0.73)         # solid lines: 27% black, as before dotted lines arrived
 LABEL = (0.43, 0.43, 0.43)          # #6E6E6E, 4.5 to 1 on white
 LABEL_COLOUR_INT = 0x6E6E6E
 FIELD_TEXT = (0.13, 0.13, 0.13)
@@ -48,23 +49,26 @@ def _box(page: pymupdf.Page, rect: pymupdf.Rect, number: int, digits: int) -> No
 def _marks(page: pymupdf.Page, areas: list, style: str, spacing: float) -> None:
     """All of a page's lines or dots in one shape, so big decks stay quick and small.
 
-    Each row is one dashed stroke, as a dotted stroke in Illustrator: each tiny round-capped dash is a dot.
-    Lines are rows of dots an eighth of the spacing apart (Julian, 2026-11-10); dots are a square grid."""
-    if style not in ("lines", "dots") or not areas:
+    Dotted lines and the dot grid are one dashed stroke per row, as a dotted stroke in Illustrator: each tiny
+    round-capped dash is a dot. Dotted lines have dots an eighth of the spacing apart (Julian, 2026-11-10)."""
+    if style not in ("lines", "dotted", "dots") or not areas:
         return
-    step = spacing / 8 if style == "lines" else spacing
+    step = spacing / 8 if style == "dotted" else spacing
     shape = page.new_shape()
     for a in areas:
-        if style == "lines":
-            first, y, bottom = a.x0, a.y0 + spacing, a.y1 + 0.01
-        else:
+        if style == "dots":
             first, y, bottom = a.x0 + spacing / 2, a.y0 + spacing / 2, a.y1
-        last = first + int((a.x1 - first) // step) * step
+        else:
+            first, y, bottom = a.x0, a.y0 + spacing, a.y1 + 0.01
+        # a dotted row runs half a gap past its last dot, so that dot's dash is drawn
+        end = a.x1 if style == "lines" else first + int((a.x1 - first) // step) * step + step / 2
         while y <= bottom:
-            shape.draw_line((first, y), (last + step / 2, y))  # half a gap past the last dot, so its dash is drawn
+            shape.draw_line((first, y), (end, y))
             y += spacing
-    # the dash period equals the step exactly, so dots never creep along a row
-    shape.finish(color=LINE, width=0.6, lineCap=1, closePath=False, dashes=f"[0.01 {step - 0.01:.4f}] 0")
+    if style == "lines":
+        shape.finish(color=SOLID, width=0.5)
+    else:  # the dash period equals the step exactly, so dots never creep along a row
+        shape.finish(color=LINE, width=0.6, lineCap=1, closePath=False, dashes=f"[0.01 {step - 0.01:.4f}] 0")
     shape.commit()
 
 

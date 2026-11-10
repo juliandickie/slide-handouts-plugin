@@ -36,7 +36,7 @@ def test_typeable_box_fields(tmp_path):
     assert doc.xref_get_key(doc.pdf_catalog(), "AcroForm/NeedAppearances") == ("bool", "true")
 
 
-@pytest.mark.parametrize("style, marks", [("lines", True), ("dots", True), ("blank", False)])
+@pytest.mark.parametrize("style, marks", [("lines", True), ("dotted", True), ("dots", True), ("blank", False)])
 def test_each_notes_style_draws_its_marks(tmp_path, style, marks):
     _, out = build(tmp_path, notes="under", per_page=2, style=style, spacing_mm=5 if style == "dots" else 8)
     page = pymupdf.open(out)[0]
@@ -113,17 +113,25 @@ def test_dots_sit_on_the_grid_to_the_end_of_each_row(tmp_path):
             assert pix.pixel(round((x + step / 2) * zoom), round(y * zoom))[0] > 250, (x, y)  # white between
 
 
-@pytest.mark.parametrize("style", ["lines", "dots"])
+@pytest.mark.parametrize("style", ["dotted", "dots"])
 def test_notes_marks_are_75_percent_black(tmp_path, style):
-    # Julian, 2026-11-10: lines and the dot grid print in dark charcoal, not light grey.
+    # Julian, 2026-11-10: dotted lines and the dot grid print in dark charcoal, not light grey.
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), notes="under", per_page=2, style=style, spacing_mm=8)
     strokes = [d for d in pymupdf.open(out)[0].get_drawings() if (d.get("dashes") or "[] 0") != "[] 0"]
     assert strokes and all(pytest.approx(d["color"], abs=0.01) == (0.25, 0.25, 0.25) for d in strokes)
 
 
-def test_lines_are_dotted_with_dots_an_eighth_of_the_spacing_apart(tmp_path):
-    # Julian, 2026-11-10: each ruled line is a row of dots an eighth of the spacing apart (1 mm at 8 mm lines).
-    opts = dict(notes="under", per_page=2, style="lines", spacing_mm=8)
+def test_solid_lines_are_unbroken_and_light_grey(tmp_path):
+    # Julian, 2026-11-10: lines can be solid or dotted. Solid lines come back as they were: 0.5 pt, 27% black.
+    _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), notes="under", per_page=2, style="lines", spacing_mm=8)
+    lines = [d for d in pymupdf.open(out)[0].get_drawings() if any(i[0] == "l" for i in d["items"])]
+    assert lines and all((d.get("dashes") or "[] 0") == "[] 0" for d in lines)
+    assert all(pytest.approx(d["color"], abs=0.01) == (0.73, 0.73, 0.73) and abs(d["width"] - 0.5) < 0.01 for d in lines)
+
+
+def test_dotted_lines_have_dots_an_eighth_of_the_spacing_apart(tmp_path):
+    # Julian, 2026-11-10: each dotted line is a row of dots an eighth of the spacing apart (1 mm at 8 mm lines).
+    opts = dict(notes="under", per_page=2, style="dotted", spacing_mm=8)
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), **opts)
     area = plan_page(LayoutOptions(**{**O, **opts}), 405 / 720).cells[0].notes[0]
     spacing, zoom = 8 * 72 / 25.4, 8

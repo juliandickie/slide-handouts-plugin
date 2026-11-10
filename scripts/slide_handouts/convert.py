@@ -18,14 +18,17 @@ OLD_TEMP = 24 * 3600
 EXPORT_YOURSELF = "export a PDF from your slide app instead, one slide per page, as the guide shows"
 PERMISSION = ("macOS did not allow Claude to control {app}. To allow it, open System Settings, Privacy and Security, "
               "Automation, and turn on {app} under the app you run Claude Code in. Or export the PDF yourself, as the guide shows.")
+# Opening a deck that is already open returns the person's own window, so a script closes only a deck it
+# opened itself, or "saving no" would drop their unsaved edits.
 MAC_SCRIPTS = {
     "PowerPoint": """on run argv
 	with timeout of 300 seconds
 		tell application "Microsoft PowerPoint"
+			set openBefore to count of presentations
 			open POSIX file (item 1 of argv)
 			set p to active presentation
 			save p in POSIX file (item 2 of argv) as save as PDF
-			close p saving no
+			if (count of presentations) > openBefore then close p saving no
 		end tell
 	end timeout
 end run""",
@@ -34,9 +37,10 @@ end run""",
 		tell application "Keynote"
 			launch
 			delay 2
+			set openBefore to count of documents
 			set d to open POSIX file (item 1 of argv)
 			export d to POSIX file (item 2 of argv) as PDF with properties {PDF image quality:Best, skipped slides:false}
-			close d saving no
+			if (count of documents) > openBefore then close d saving no
 		end tell
 	end timeout
 end run""",

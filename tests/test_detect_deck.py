@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+import pymupdf
+
 from make_fixtures import damaged_pdf, deck_pdf, empty_pdf, encrypted_pdf, paper_deck_pdf
 from slide_handouts.detect import RefusedError, detect, open_pdf, shape_name
 
@@ -48,3 +50,21 @@ def test_real_deck_exports(name):
     d = detect(open_pdf(REAL / name))
     assert len(d.slides) == EXPECTED[name]["count"]
     assert [s.number for s in d.slides] == EXPECTED[name]["numbers"]
+
+
+def test_refuses_a_picture_named_pdf(tmp_path):
+    # Final review I5: MuPDF opens a PNG even when told it is a PDF, and build then failed with a traceback.
+    picture = tmp_path / "slides.pdf"
+    pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 30), False).save(str(picture), output="png")
+    with pytest.raises(RefusedError, match="not a PDF"):
+        open_pdf(picture)
+
+
+@pytest.mark.parametrize("one_per_page", [False, True])
+def test_refuses_pages_turned_inside_the_pdf(tmp_path, one_per_page):
+    # Final review I6: a /Rotate page was placed cropped and unrotated, and the self-check passed.
+    doc = pymupdf.open(deck_pdf(tmp_path / "d.pdf", n=2))
+    doc[1].set_rotation(90)
+    doc.save(str(tmp_path / "r.pdf"))
+    with pytest.raises(RefusedError, match="turned"):
+        detect(open_pdf(tmp_path / "r.pdf"), one_per_page=one_per_page)

@@ -1,7 +1,7 @@
 """Test fixtures: a made-up deck and synthetic PDFs. Never real decks.
 
 Run as a script to make the made-up deck:
-uv run --no-project --with python-pptx --with "pymupdf>=2.1,<3" python -I tests/make_fixtures.py deck <out.pptx>
+uv run --no-project --python 3.13 --with python-pptx --with "pymupdf>=2.1,<3" python -I tests/make_fixtures.py deck <out.pptx>
 """
 import sys
 import tempfile
@@ -142,12 +142,12 @@ def handout_pdf(path: Path, n: int = 7, per_page: int = 3, numbers: bool = True,
     return path
 
 
-def scanned_handout_pdf(path: Path) -> Path:
-    """A handout page that is one picture, as a scan would be."""
+def scanned_handout_pdf(path: Path, size: tuple[float, float] = A4) -> Path:
+    """A handout page that is one picture, as a scan would be. Some scanner apps write the page at its pixel size."""
     source = pymupdf.open(handout_pdf(Path(path).with_suffix(".source.pdf"), n=3))
     pix = source[0].get_pixmap(dpi=100)
     out = pymupdf.open()
-    out.new_page(width=A4[0], height=A4[1]).insert_image(pymupdf.Rect(0, 0, *A4), pixmap=pix)
+    out.new_page(width=size[0], height=size[1]).insert_image(pymupdf.Rect(0, 0, *size), pixmap=pix)
     out.save(str(path))
     return Path(path)
 

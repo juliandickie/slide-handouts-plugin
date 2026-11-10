@@ -59,6 +59,13 @@ def test_refuses_scanned_handout(tmp_path):
         detect(open_pdf(scanned_handout_pdf(tmp_path / "s.pdf")))
 
 
+@pytest.mark.parametrize("size", [(1240, 1754), (598, 845)])
+def test_refuses_a_scan_whose_page_is_not_a_paper_size(tmp_path, size):
+    # Final review I1: A4 at 150 dpi pixel size, and a page just outside the A4 tolerance, were read as decks.
+    with pytest.raises(RefusedError, match="--one-per-page"):
+        detect(open_pdf(scanned_handout_pdf(tmp_path / "s.pdf", size=size)))
+
+
 @pytest.mark.parametrize("name", [n for n, e in EXPECTED.items() if e.get("kind") != "deck"])
 def test_real_handout_exports(name):
     want = EXPECTED[name]

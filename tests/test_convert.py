@@ -16,6 +16,27 @@ from slide_handouts.detect import RefusedError
 REAL = Path(__file__).parent / "fixtures" / "real"
 
 
+@pytest.mark.parametrize("app, kind", [("PowerPoint", "presentations"), ("Keynote", "documents")])
+def test_a_deck_that_was_already_open_is_left_open(app, kind):
+    # Final review I2: opening an already-open deck returns the person's window, and "close saving no" then
+    # dropped their unsaved edits. Close only a deck the script opened itself: the count of open ones went up.
+    script = convert_module.MAC_SCRIPTS[app]
+    lines = [line.strip() for line in script.splitlines()]
+    count = lines.index(f"set openBefore to count of {kind}")
+    opened = next(i for i, line in enumerate(lines) if line.startswith(("open ", "set d to open ")))
+    closes = [line for line in lines if " saving no" in line]
+    assert count < opened and closes and all(line.startswith(f"if (count of {kind}) > openBefore then close ") for line in closes)
+
+
+@pytest.mark.skipif(sys.platform != "darwin" or not shutil.which("osacompile"), reason="needs macOS osacompile")
+@pytest.mark.parametrize("app", ["PowerPoint", "Keynote"])
+def test_mac_scripts_compile(app, tmp_path):
+    # A reserved word ("before") once broke both scripts while every text check passed.
+    result = subprocess.run(["osacompile", "-o", str(tmp_path / "s.scpt"), "-"], input=convert_module.MAC_SCRIPTS[app],
+                            capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+
+
 def test_sweep_removes_only_old_folders(tmp_path, monkeypatch):
     monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     old, new, other = (tmp_path / n for n in ("slide-handouts-old", "slide-handouts-new", "keep-me"))

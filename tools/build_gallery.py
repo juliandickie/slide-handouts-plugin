@@ -1,6 +1,6 @@
 """Contributor script: rebuild the README gallery images, and the export guide's handout pages, from
 the made-up deck and its real exports. Run from the repo root:
-uv run --no-project --with "pymupdf>=2.1,<3" python -I tools/build_gallery.py
+uv run --no-project --python 3.13 --with "pymupdf>=2.1,<3" python -I tools/build_gallery.py
 """
 import contextlib
 import io

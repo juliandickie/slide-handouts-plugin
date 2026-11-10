@@ -8,7 +8,7 @@ First release.
 - Finds every slide and its number with no typed-in positions, and stops with a plain sentence rather than guess when it cannot.
 - Keeps each hidden slide's real number when given the original PowerPoint file.
 - Builds a handout on A4 or US Letter, portrait or landscape, with 1, 2, 3, 4 or 6 slides per page.
-- Notes beside, under, or beside and under each slide, as dotted lines, a dot grid, blank space or a typeable box.
+- Notes beside, under, or beside and under each slide, as solid or dotted lines, a dot grid, blank space or a typeable box.
 - Line and dot spacing from 4 to 12 mm, and smaller, medium, larger or exact slide widths.
 - Places slides as vectors, so they stay sharp.
 - Checks every handout before reporting it, and warns about photos that may print soft and slides under 70 mm wide.

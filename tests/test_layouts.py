@@ -1,9 +1,10 @@
+import argparse
 import json
 from collections import defaultdict
 
 import pytest
 
-from slide_handouts.layouts import (GALLERY, LayoutError, delete_layout, list_layouts, load_store, resolve,
+from slide_handouts.layouts import (GALLERY, LayoutError, add_layout_arguments, delete_layout, list_layouts, load_store, resolve,
                                     save_layout)
 
 FULL = ["--paper", "a4", "--orientation", "portrait", "--per-page", "3", "--notes", "beside",
@@ -65,7 +66,10 @@ def test_gallery_covers_every_option_value(tmp_path):
         seen["size"].add(o.size if isinstance(o.size, str) else "mm")
         seen["spacing"].add(o.spacing_mm)
     assert seen["per_page"] == {1, 2, 3, 4, 6} and seen["notes"] == {"beside", "under", "both"}
-    assert seen["style"] == {"lines", "dots", "blank", "box"} and {5, 6, 7, 8} <= seen["spacing"]
+    parser = argparse.ArgumentParser()
+    add_layout_arguments(parser)
+    styles = next(a for a in parser._actions if a.dest == "style").choices  # every style the script offers
+    assert seen["style"] == set(styles) and {5, 6, 7, 8} <= seen["spacing"]
     assert seen["size"] == {"smaller", "medium", "larger", "mm"} and len(seen["paper"]) == 2
 
 
@@ -78,3 +82,5 @@ def test_spacing_fallbacks_follow_the_style(tmp_path):
     dots = [a if a != "lines" else "dots" for a in FULL]
     assert resolve(dots, None, tmp_path / "l.json").spacing_mm == 5
     assert resolve(FULL, None, tmp_path / "l.json").spacing_mm == 8
+    dotted = [a if a != "lines" else "dotted" for a in FULL]
+    assert resolve(dotted, None, tmp_path / "l.json").spacing_mm == 8

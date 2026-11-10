@@ -51,7 +51,7 @@ def add_layout_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--orientation", choices=["portrait", "landscape"])
     parser.add_argument("--per-page", type=int, choices=[1, 2, 3, 4, 6])
     parser.add_argument("--notes", choices=["beside", "under", "both"])
-    parser.add_argument("--style", choices=["lines", "dots", "blank", "box"])
+    parser.add_argument("--style", choices=["lines", "dotted", "dots", "blank", "box"])
     parser.add_argument("--spacing", type=_spacing, help="4 to 12 mm")
     parser.add_argument("--size", type=_size, help="smaller, medium, larger or a slide width in mm")
 
@@ -104,6 +104,8 @@ def resolve(typed: list[str], name: str | None, store: Path = STORE) -> LayoutOp
     missing = [key.replace("_", "-") for key in REQUIRED if getattr(ns, key) is None]
     if missing:
         raise LayoutError("Missing layout options: " + ", ".join(missing) + ".")
+    if ns.style == "box" and ns.notes == "both":
+        raise LayoutError("A typeable box works with notes beside or under each slide, not both.")
     spacing = ns.spacing if ns.spacing is not None else (5.0 if ns.style == "dots" else 8.0)
     return LayoutOptions(ns.paper, ns.orientation, ns.per_page, ns.notes, ns.style, spacing, ns.size)
 

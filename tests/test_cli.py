@@ -97,3 +97,15 @@ def test_preview_renders_first_and_last_and_marks_order(tmp_path):
     src = handout_pdf(tmp_path / "h.pdf", n=7)
     imgs = render_pages(src, ["1", "last"], tmp_path / "png", mark=detect(open_pdf(src)))
     assert len(imgs) == 2 and all(p.exists() and p.suffix == ".png" for p in imgs)
+
+
+@pytest.mark.parametrize("command", ["build", "save"])
+def test_typeable_box_on_both_sides_is_refused_plainly(tmp_path, capsys, monkeypatch, command):
+    # Final review I4: layouts save accepted it, and build failed with "Something went wrong" and a traceback.
+    monkeypatch.setattr(layouts, "STORE", tmp_path / "l.json")
+    both = [a if a not in ("beside", "lines") else {"beside": "both", "lines": "box"}[a] for a in FULL]
+    argv = ["build", handout_pdf(tmp_path / "h.pdf"), *both] if command == "build" else ["layouts", "save", "two boxes", *both]
+    code = main([str(a) for a in argv])
+    captured = capsys.readouterr()
+    assert code == 1 and json.loads(captured.out)["error"].startswith("A typeable box works")
+    assert captured.err == "" and not (tmp_path / "l.json").exists()

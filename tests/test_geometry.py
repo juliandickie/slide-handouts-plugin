@@ -94,3 +94,4 @@ def test_every_combination_passes_its_checks():
 def test_describe_uses_plain_neutral_words():
     o = opts(orientation="landscape", style="dots", spacing_mm=5, size="smaller")
     assert describe(o) == "A4 landscape, 3 slides per page, dots beside each slide (5 mm apart), smaller slides"
+    assert describe(opts(style="dotted", spacing_mm=8)).startswith("A4 portrait, 3 slides per page, dotted lines beside each slide (8 mm apart)")

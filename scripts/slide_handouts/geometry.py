@@ -48,7 +48,7 @@ class PageLayout:
 
 
 def under_min(opts: LayoutOptions) -> float:
-    return 2 * opts.spacing_mm * MM if opts.style in ("lines", "dots") else 16 * MM
+    return 2 * opts.spacing_mm * MM if opts.style in ("lines", "dotted", "dots") else 16 * MM
 
 
 def _larger(opts, cols, rows, w, h, aspect):
@@ -156,9 +156,9 @@ def check_layout(layout: PageLayout, opts: LayoutOptions) -> list[str]:
 
 
 def describe(opts: LayoutOptions) -> str:
-    style = {"lines": "lines", "dots": "dots", "blank": "blank space", "box": "a typeable box"}[opts.style]
+    style = {"lines": "lines", "dotted": "dotted lines", "dots": "dots", "blank": "blank space", "box": "a typeable box"}[opts.style]
     where = {"beside": "beside each slide", "under": "under each slide", "both": "beside and under each slide"}[opts.notes]
-    spacing = f" ({opts.spacing_mm:g} mm apart)" if opts.style in ("lines", "dots") else ""
+    spacing = f" ({opts.spacing_mm:g} mm apart)" if opts.style in ("lines", "dotted", "dots") else ""
     size = f"{opts.size} slides" if isinstance(opts.size, str) else f"slides {opts.size:g} mm wide"
     per = "1 slide per page" if opts.per_page == 1 else f"{opts.per_page} slides per page"
     return f"{'A4' if opts.paper == 'a4' else 'Letter'} {opts.orientation}, {per}, {style} {where}{spacing}, {size}"

@@ -39,6 +39,8 @@ def open_pdf(path: Path) -> pymupdf.Document:
         doc = pymupdf.open(str(path), filetype="pdf")
     except Exception:
         raise RefusedError(f"{name} could not be opened. It may be damaged, or not a PDF.") from None
+    if not doc.is_pdf:  # MuPDF opens a picture even when told it is a PDF
+        raise RefusedError(f"{name} is not a PDF. Export the slides to PDF and try again.")
     if doc.needs_pass:
         raise RefusedError(f"{name} is protected by a password. Export it again without one.")
     if doc.page_count == 0:
@@ -210,6 +212,8 @@ def _handout(doc: pymupdf.Document, frames: list, order: str) -> Detection:
 
 
 def detect(doc: pymupdf.Document, order: str = "rows", one_per_page: bool = False) -> Detection:
+    if any(page.rotation for page in doc):  # show_pdf_page ignores a source page's rotation
+        raise RefusedError(f"Some pages are turned inside the PDF, so the slides cannot be placed reliably. {EXPORT_ADVICE}")
     if one_per_page:
         return _deck(doc)
     frames = _frames(doc)
@@ -221,4 +225,6 @@ def detect(doc: pymupdf.Document, order: str = "rows", one_per_page: bool = Fals
     # Keynote's handout export uses 1024 x 768 pt pages, not paper.
     if frames and len(frames[0]) >= 2 and all(len(f) >= 2 for f in frames[:-1]):
         return _handout(doc, frames, order)
+    if doc[0].rect.width / doc[0].rect.height < 1.2:  # narrower than any slide: a scan or a printed page
+        raise RefusedError(NO_FRAMES)
     return _deck(doc)

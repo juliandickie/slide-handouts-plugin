@@ -25,7 +25,7 @@ A Claude Code plugin. The `handouts` skill runs one script through uv and reads 
 From the repo root:
 
 ```bash
-uv run --no-project --with "pymupdf>=2.1,<3" --with pytest pytest -p no:warnings
+uv run --no-project --python 3.13 --with "pymupdf>=2.1,<3" --with pytest pytest -p no:warnings
 ```
 
 `-p no:warnings` hides PyMuPDF's SWIG deprecation warnings. The suite takes a few seconds.
@@ -35,7 +35,7 @@ The two live conversion tests drive PowerPoint and Keynote, so they run only wit
 ## Rebuild the gallery
 
 ```bash
-uv run --no-project --with "pymupdf>=2.1,<3" python -I tools/build_gallery.py
+uv run --no-project --python 3.13 --with "pymupdf>=2.1,<3" python -I tools/build_gallery.py
 ```
 
 It rebuilds every image in `assets/examples/` from a made-up 12-slide deck. Open each image and look at it before you commit. Each README caption must be exactly `describe()` of that example's options, and `tests/test_docs.py` checks this.

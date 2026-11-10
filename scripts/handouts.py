@@ -1,5 +1,5 @@
 """Slide Handouts command line. Run it as:
-uv run --no-project --with "pymupdf>=2.1,<3" python -I scripts/handouts.py <subcommand> ...
+uv run --no-project --python 3.13 --with "pymupdf>=2.1,<3" python -I scripts/handouts.py <subcommand> ...
 """
 import sys
 from pathlib import Path

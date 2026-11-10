@@ -72,7 +72,7 @@ If you have a PowerPoint, Keynote or Google Slides deck, export it to PDF first.
 
 **Notes position.** Beside each slide, under each slide, or both. Notes beside suit wide pages and short notes per slide. Notes under give each slide a full-width writing area.
 
-**Notes style.** Dotted lines, a dot grid, blank space, or a typeable box. Each line is a row of dark grey dots, 1 mm apart when the lines are 8 mm apart. Lines and dots suit pens. Blank space suits sketches and diagrams. A typeable box makes the PDF fillable, so you can type notes on screen. A box works beside or under each slide, not both.
+**Notes style.** Lines, a dot grid, blank space, or a typeable box. Lines can be solid or dotted. Solid lines are light grey. Dotted lines are rows of dark grey dots, 1 mm apart when the lines are 8 mm apart. Lines and dots suit pens. Blank space suits sketches and diagrams. A typeable box makes the PDF fillable, so you can type notes on screen. A box works beside or under each slide, not both.
 
 **Spacing.** For lines and dots, the gap between them, from 4 to 12 mm. Narrow is 6 mm, medium is 7 mm and wide is 8 mm, and any value in between works. Wider spacing suits larger handwriting and gives fewer lines.
 
@@ -98,7 +98,7 @@ A4 portrait, 3 slides per page, lines beside and under each slide (8 mm apart), 
 
 ![Example 3, page 1](assets/examples/example-03.png)
 
-A4 landscape, 3 slides per page, lines beside each slide (8 mm apart), larger slides
+A4 landscape, 3 slides per page, dotted lines beside each slide (8 mm apart), larger slides
 
 ### Example 4
 
@@ -146,7 +146,7 @@ Letter portrait, 6 slides per page, a typeable box under each slide, medium slid
 
 ![Example 11, page 1](assets/examples/example-11.png)
 
-A4 landscape, 4 slides per page, lines beside and under each slide (6 mm apart), medium slides
+A4 landscape, 4 slides per page, dotted lines beside and under each slide (6 mm apart), medium slides
 
 ## Saved layouts
 
@@ -195,7 +195,7 @@ The plugin stops rather than guess, because a handout with slides in the wrong o
 
 ### The file cannot be opened
 
-**What it says:** "could not be opened. It may be damaged, or not a PDF", "is protected by a password. Export it again without one" or "has no pages".
+**What it says:** "could not be opened. It may be damaged, or not a PDF", "is not a PDF. Export the slides to PDF and try again", "is protected by a password. Export it again without one", "has no pages" or "Some pages are turned inside the PDF".
 
 **What to do:** Export the PDF again from the slide app, with no password.
 
