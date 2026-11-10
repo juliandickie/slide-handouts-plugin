@@ -55,7 +55,7 @@ The export guide is at https://github.com/juliandickie/slide-handouts-plugin/blo
 - upright or sideways pages: `--orientation portrait` or `--orientation landscape`
 - "3 to a page": `--per-page 3` (1, 2, 3, 4 or 6)
 - notes to the side, below, or both: `--notes beside`, `--notes under`, `--notes both`
-- ruled lines, dots, empty space, a box to type into: `--style lines`, `--style dots`, `--style blank`, `--style box`
+- dotted lines, a dot grid, empty space, a box to type into: `--style lines`, `--style dots`, `--style blank`, `--style box`
 - narrow, medium or wide spacing: `--spacing 6`, `--spacing 7`, `--spacing 8` (any value from 4 to 12 mm)
 - bigger slides, in between, more room to write: `--size larger`, `--size medium`, `--size smaller`, or an exact width such as `--size 120`
 - "example 6": `--layout-name "example 6"`, and any options given beside it change that example

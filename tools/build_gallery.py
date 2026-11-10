@@ -47,7 +47,9 @@ def snapshot(pdfs: list, png: Path, dpi: int, labels: tuple = ()) -> None:
         page.draw_rect(rect, color=None, fill=(1, 1, 1))
         page.show_pdf_page(rect, doc, 0)
         page.draw_rect(rect, color=(0.6, 0.6, 0.6), width=1)
-    page.get_pixmap(dpi=dpi).save(str(png))
+    pix = page.get_pixmap(dpi=dpi * 4)  # render at 4x and average down, or the 0.6 pt dots alias into uneven or missing dots
+    pix.shrink(2)
+    pix.save(str(png))
 
 
 def main() -> None:

@@ -113,6 +113,22 @@ def test_dots_sit_on_the_grid_to_the_end_of_each_row(tmp_path):
             assert pix.pixel(round((x + step / 2) * zoom), round(y * zoom))[0] > 250, (x, y)  # white between
 
 
+def test_lines_are_dotted_with_three_dots_between_grid_dots(tmp_path):
+    # Julian, 2026-11-10: each ruled line is a row of dots a quarter of the spacing apart, from the left edge to the right.
+    opts = dict(notes="under", per_page=2, style="lines", spacing_mm=8)
+    _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), **opts)
+    area = plan_page(LayoutOptions(**{**O, **opts}), 405 / 720).cells[0].notes[0]
+    spacing, zoom = 8 * 72 / 25.4, 8
+    step = spacing / 4
+    pix = pymupdf.open(out)[0].get_pixmap(matrix=pymupdf.Matrix(zoom, zoom))
+    ys = [area.y0 + spacing * j for j in range(1, int(area.height // spacing) + 1)]
+    xs = [area.x0 + step * k for k in range(int(area.width // step) + 1)]
+    for y in (ys[0], ys[-1]):
+        for x in xs[1:]:  # the first dot's left half sits on the area's edge, so check from the second
+            assert pix.pixel(round(x * zoom), round(y * zoom))[0] < 235, (x, y)  # a dot here
+            assert pix.pixel(round((x - step / 2) * zoom), round(y * zoom))[0] > 250, (x, y)  # white between
+
+
 def test_labels_keep_their_font_when_the_slides_also_use_helvetica(tmp_path):
     # The made-up slides set "S1" in PyMuPDF's "helv" too. That name must not hide the labels' own font.
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=4))

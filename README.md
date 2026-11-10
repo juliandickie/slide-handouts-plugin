@@ -72,7 +72,7 @@ If you have a PowerPoint, Keynote or Google Slides deck, export it to PDF first.
 
 **Notes position.** Beside each slide, under each slide, or both. Notes beside suit wide pages and short notes per slide. Notes under give each slide a full-width writing area.
 
-**Notes style.** Ruled lines, a dot grid, blank space, or a typeable box. Lines and dots suit pens. Blank space suits sketches and diagrams. A typeable box makes the PDF fillable, so you can type notes on screen. A box works beside or under each slide, not both.
+**Notes style.** Dotted lines, a dot grid, blank space, or a typeable box. Each line is a row of dots a quarter of the spacing apart. Lines and dots suit pens. Blank space suits sketches and diagrams. A typeable box makes the PDF fillable, so you can type notes on screen. A box works beside or under each slide, not both.
 
 **Spacing.** For lines and dots, the gap between them, from 4 to 12 mm. Narrow is 6 mm, medium is 7 mm and wide is 8 mm, and any value in between works. Wider spacing suits larger handwriting and gives fewer lines.
 

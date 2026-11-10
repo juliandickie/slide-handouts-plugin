@@ -46,27 +46,25 @@ def _box(page: pymupdf.Page, rect: pymupdf.Rect, number: int, digits: int) -> No
 
 
 def _marks(page: pymupdf.Page, areas: list, style: str, spacing: float) -> None:
-    """All of a page's lines or dots in one shape, so big decks stay quick and small."""
+    """All of a page's lines or dots in one shape, so big decks stay quick and small.
+
+    Each row is one dashed stroke, as a dotted stroke in Illustrator: each tiny round-capped dash is a dot.
+    Lines are rows of dots a quarter of the spacing apart (Julian, 2026-11-10); dots are a square grid."""
     if style not in ("lines", "dots") or not areas:
         return
+    step = spacing / 4 if style == "lines" else spacing
     shape = page.new_shape()
     for a in areas:
         if style == "lines":
-            y = a.y0 + spacing
-            while y <= a.y1 + 0.01:
-                shape.draw_line((a.x0, y), (a.x1, y))
-                y += spacing
-        else:  # one dashed stroke per row, as a dotted stroke in Illustrator: each tiny round-capped dash is a dot
-            first = a.x0 + spacing / 2
-            last = first + int((a.x1 - first) // spacing) * spacing
-            y = a.y0 + spacing / 2
-            while y <= a.y1:
-                shape.draw_line((first, y), (last + spacing / 2, y))  # half a gap past the last dot, so its dash is drawn
-                y += spacing
-    if style == "lines":
-        shape.finish(color=LINE, width=0.5)
-    else:  # the dash period equals the spacing exactly, so dots never creep along a row
-        shape.finish(color=LINE, width=0.6, lineCap=1, closePath=False, dashes=f"[0.01 {spacing - 0.01:.4f}] 0")
+            first, y, bottom = a.x0, a.y0 + spacing, a.y1 + 0.01
+        else:
+            first, y, bottom = a.x0 + spacing / 2, a.y0 + spacing / 2, a.y1
+        last = first + int((a.x1 - first) // step) * step
+        while y <= bottom:
+            shape.draw_line((first, y), (last + step / 2, y))  # half a gap past the last dot, so its dash is drawn
+            y += spacing
+    # the dash period equals the step exactly, so dots never creep along a row
+    shape.finish(color=LINE, width=0.6, lineCap=1, closePath=False, dashes=f"[0.01 {step - 0.01:.4f}] 0")
     shape.commit()
 
 
