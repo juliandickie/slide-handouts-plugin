@@ -4,7 +4,7 @@ from pathlib import Path
 # Spelled as code points so this file holds none of them itself.
 BANNED = "".join(map(chr, [0x2013, 0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2122, 0xAE, 0xA9,
                            *range(0xFB00, 0xFB07)]))
-PATTERNS = ["README.md", "CHANGELOG.md", "CLAUDE.md", "skills/**/*.md", ".claude-plugin/*.json",
+PATTERNS = ["README.md", "CHANGELOG.md", "CLAUDE.md", "guide/*.md", "skills/**/*.md", ".claude-plugin/*.json",
             "scripts/**/*.py", "scripts/**/*.json", "tools/*.py"]
 
 

@@ -31,7 +31,7 @@ The export guide is at https://github.com/juliandickie/slide-handouts-plugin/blo
    - By default, give the export steps for their app and wait for the PDF:
      - PowerPoint on a Mac: File, Export, File Format PDF, Export.
      - PowerPoint on Windows: File, Export, Create PDF/XPS, Publish.
-     - Keynote: File, Export To, PDF, with "Include skipped slides" off, Next, Export.
+     - Keynote: File, Export To, PDF, with "Include skipped slides", "Include presenter notes" and "Include each stage of builds" unticked, then Save (Next in older versions).
      - Google Slides: File, Download, PDF document.
      - Link the export guide for screenshots.
    - Only if the person asks you to convert it, offer automatic conversion. Say first that it needs permission for Claude to control PowerPoint or Keynote, and that the app may ask them to allow access to the folder. Then run `"${CLAUDE_PLUGIN_ROOT}/scripts/handouts.py" convert <file>`. Tell them which app converted it, and when it was Keynote, that fonts can shift. Google Slides has no automatic conversion.
