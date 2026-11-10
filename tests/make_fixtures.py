@@ -67,11 +67,17 @@ def _draw_slide(page: pymupdf.Page, i: int) -> None:
                    fill=[c / 255 for c in COLOURS[(i + 1) % 4]])
 
 
-def deck_pdf(path: Path, n: int = 7, size: tuple[float, float] = (720, 405)) -> Path:
-    """One slide per page at slide size."""
+def deck_pdf(path: Path, n: int = 7, size: tuple[float, float] = (720, 405), photo_on: int | None = None) -> Path:
+    """One slide per page at slide size. photo_on puts a 60 x 34 pixel picture across half of that slide."""
     doc = pymupdf.open()
     for i in range(1, n + 1):
-        _draw_slide(doc.new_page(width=size[0], height=size[1]), i)
+        page = doc.new_page(width=size[0], height=size[1])
+        _draw_slide(page, i)
+        if i == photo_on:
+            pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 60, 34), False)
+            pix.set_rect(pix.irect, (200, 60, 60))
+            w, h = size
+            page.insert_image(pymupdf.Rect(w * 0.06, h * 0.3, w * 0.56, h * 0.3 + w * 0.5 * 34 / 60), pixmap=pix)
     doc.save(str(path))
     return Path(path)
 
