@@ -89,6 +89,30 @@ def test_photo_warning_line_is_120_ppi(tmp_path, px, flagged):
     assert (res.low_res == [1]) is flagged
 
 
+DOTS = dict(orientation="landscape", style="dots", spacing_mm=5, size="smaller")
+
+
+def test_dot_grid_adds_little_to_the_file(tmp_path):
+    src = deck_pdf(tmp_path / "d.pdf", n=60)
+    (tmp_path / "blank").mkdir()
+    res, dots = build(tmp_path, src=src, **DOTS)
+    _, blank = build(tmp_path / "blank", src=src, **{**DOTS, "style": "blank"})
+    assert (dots.stat().st_size - blank.stat().st_size) / res.pages < 5_000
+
+
+def test_dots_sit_on_the_grid_to_the_end_of_each_row(tmp_path):
+    _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=3), **DOTS)
+    column = plan_page(LayoutOptions(**{**O, **DOTS}), 405 / 720).column
+    step, zoom = 5 * 72 / 25.4, 8
+    pix = pymupdf.open(out)[0].get_pixmap(matrix=pymupdf.Matrix(zoom, zoom))
+    ys = [column.y0 + step / 2 + j * step for j in range(int((column.height - step / 2) // step) + 1)]
+    xs = [column.x0 + step / 2 + k * step for k in range(int((column.width - step / 2) // step) + 1)]
+    for y in (ys[0], ys[-1]):
+        for x in xs:
+            assert pix.pixel(round(x * zoom), round(y * zoom))[0] < 235, (x, y)  # a dot here
+            assert pix.pixel(round((x + step / 2) * zoom), round(y * zoom))[0] > 250, (x, y)  # white between
+
+
 def test_labels_keep_their_font_when_the_slides_also_use_helvetica(tmp_path):
     # The made-up slides set "S1" in PyMuPDF's "helv" too. That name must not hide the labels' own font.
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=4))

@@ -56,18 +56,17 @@ def _marks(page: pymupdf.Page, areas: list, style: str, spacing: float) -> None:
             while y <= a.y1 + 0.01:
                 shape.draw_line((a.x0, y), (a.x1, y))
                 y += spacing
-        else:
+        else:  # one dashed stroke per row, as a dotted stroke in Illustrator: each tiny round-capped dash is a dot
+            first = a.x0 + spacing / 2
+            last = first + int((a.x1 - first) // spacing) * spacing
             y = a.y0 + spacing / 2
             while y <= a.y1:
-                x = a.x0 + spacing / 2
-                while x <= a.x1:
-                    shape.draw_circle((x, y), 0.3)
-                    x += spacing
+                shape.draw_line((first, y), (last + spacing / 2, y))  # half a gap past the last dot, so its dash is drawn
                 y += spacing
     if style == "lines":
         shape.finish(color=LINE, width=0.5)
-    else:
-        shape.finish(color=None, fill=LINE, width=0)
+    else:  # the dash period equals the spacing exactly, so dots never creep along a row
+        shape.finish(color=LINE, width=0.6, lineCap=1, closePath=False, dashes=f"[0.01 {spacing - 0.01:.4f}] 0")
     shape.commit()
 
 

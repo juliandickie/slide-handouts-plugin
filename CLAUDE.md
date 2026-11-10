@@ -28,7 +28,7 @@ From the repo root:
 uv run --no-project --with "pymupdf>=2.1,<3" --with pytest pytest -p no:warnings
 ```
 
-`-p no:warnings` hides PyMuPDF's SWIG deprecation warnings. The 600-slide dot grid test takes about 35 seconds.
+`-p no:warnings` hides PyMuPDF's SWIG deprecation warnings. The suite takes a few seconds.
 
 The two live conversion tests drive PowerPoint and Keynote, so they run only with `SLIDE_HANDOUTS_LIVE=1`, on a Mac, with a person at the screen. PowerPoint asks to grant access to each new folder (click Select, then Grant), and Keynote can wait with no visible prompt.
 
