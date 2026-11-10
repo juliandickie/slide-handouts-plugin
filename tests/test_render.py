@@ -113,13 +113,21 @@ def test_dots_sit_on_the_grid_to_the_end_of_each_row(tmp_path):
             assert pix.pixel(round((x + step / 2) * zoom), round(y * zoom))[0] > 250, (x, y)  # white between
 
 
-def test_lines_are_dotted_with_three_dots_between_grid_dots(tmp_path):
-    # Julian, 2026-11-10: each ruled line is a row of dots a quarter of the spacing apart, from the left edge to the right.
+@pytest.mark.parametrize("style", ["lines", "dots"])
+def test_notes_marks_are_75_percent_black(tmp_path, style):
+    # Julian, 2026-11-10: lines and the dot grid print in dark charcoal, not light grey.
+    _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), notes="under", per_page=2, style=style, spacing_mm=8)
+    strokes = [d for d in pymupdf.open(out)[0].get_drawings() if (d.get("dashes") or "[] 0") != "[] 0"]
+    assert strokes and all(pytest.approx(d["color"], abs=0.01) == (0.25, 0.25, 0.25) for d in strokes)
+
+
+def test_lines_are_dotted_with_dots_an_eighth_of_the_spacing_apart(tmp_path):
+    # Julian, 2026-11-10: each ruled line is a row of dots an eighth of the spacing apart (1 mm at 8 mm lines).
     opts = dict(notes="under", per_page=2, style="lines", spacing_mm=8)
     _, out = build(tmp_path, src=deck_pdf(tmp_path / "d.pdf", n=2), **opts)
     area = plan_page(LayoutOptions(**{**O, **opts}), 405 / 720).cells[0].notes[0]
     spacing, zoom = 8 * 72 / 25.4, 8
-    step = spacing / 4
+    step = spacing / 8
     pix = pymupdf.open(out)[0].get_pixmap(matrix=pymupdf.Matrix(zoom, zoom))
     ys = [area.y0 + spacing * j for j in range(1, int(area.height // spacing) + 1)]
     xs = [area.x0 + step * k for k in range(int(area.width // step) + 1)]

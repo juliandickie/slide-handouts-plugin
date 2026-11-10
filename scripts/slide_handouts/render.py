@@ -9,7 +9,7 @@ from .detect import Detection
 from .geometry import MARGIN, MM, LayoutOptions, check_layout, plan_page
 
 BORDER = (0.70, 0.70, 0.70)
-LINE = (0.73, 0.73, 0.73)
+LINE = (0.25, 0.25, 0.25)          # 75% black, dark charcoal (Julian, 2026-11-10)
 LABEL = (0.43, 0.43, 0.43)          # #6E6E6E, 4.5 to 1 on white
 LABEL_COLOUR_INT = 0x6E6E6E
 FIELD_TEXT = (0.13, 0.13, 0.13)
@@ -49,10 +49,10 @@ def _marks(page: pymupdf.Page, areas: list, style: str, spacing: float) -> None:
     """All of a page's lines or dots in one shape, so big decks stay quick and small.
 
     Each row is one dashed stroke, as a dotted stroke in Illustrator: each tiny round-capped dash is a dot.
-    Lines are rows of dots a quarter of the spacing apart (Julian, 2026-11-10); dots are a square grid."""
+    Lines are rows of dots an eighth of the spacing apart (Julian, 2026-11-10); dots are a square grid."""
     if style not in ("lines", "dots") or not areas:
         return
-    step = spacing / 4 if style == "lines" else spacing
+    step = spacing / 8 if style == "lines" else spacing
     shape = page.new_shape()
     for a in areas:
         if style == "lines":
