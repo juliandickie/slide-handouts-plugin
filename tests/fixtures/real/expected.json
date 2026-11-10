@@ -1,0 +1,11 @@
+{
+  "keynote-slides.pdf": {"kind": "deck", "per_page": 1, "count": 11, "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "numbers_from": "page order"},
+  "keynote-slides-with-skipped.pdf": {"kind": "deck", "per_page": 1, "count": 13, "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], "numbers_from": "page order"},
+  "powerpoint-slides.pdf": {"kind": "deck", "per_page": 1, "count": 11, "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "numbers_from": "page order"},
+  "keynote-handout-3.pdf": {"kind": "handout", "per_page": 3, "count": 11, "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "numbers_from": "printed"},
+  "powerpoint-handout-2.pdf": {"kind": "handout", "per_page": 2, "count": 11, "numbers": [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13], "numbers_from": "printed"},
+  "powerpoint-handout-3.pdf": {"kind": "handout", "per_page": 3, "count": 11, "numbers": [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13], "numbers_from": "printed"},
+  "powerpoint-handout-3-noframe.pdf": {"kind": "handout", "per_page": 3, "count": 11, "numbers": [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13], "numbers_from": "printed"},
+  "powerpoint-handout-4.pdf": {"kind": "handout", "per_page": 4, "count": 11, "numbers": [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13], "numbers_from": "printed"},
+  "powerpoint-handout-6.pdf": {"kind": "handout", "per_page": 6, "count": 11, "numbers": [1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13], "numbers_from": "printed"}
+}
