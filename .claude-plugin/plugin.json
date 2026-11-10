@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "slide-handouts",
+  "version": "0.1.0",
+  "description": "Turn slide handouts into bigger, easier-to-read printable pages with room for notes. Activates for: (1) slide handouts and printable slides with notes, from a PowerPoint handout PDF, a slide deck PDF, or a PowerPoint, Keynote or Google Slides file, (2) bigger slides or a different number of slides per page, (3) note-taking lines, a dot grid, blank space or fillable notes boxes beside or under each slide, (4) saving and reusing a usual handout layout.",
+  "author": { "name": "Julian Dickie" },
+  "license": "MIT",
+  "homepage": "https://github.com/juliandickie/slide-handouts-plugin",
+  "keywords": ["slides", "handouts", "pdf", "powerpoint", "keynote", "notes", "printable"]
+}
