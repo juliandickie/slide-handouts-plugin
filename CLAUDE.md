@@ -30,7 +30,11 @@ uv run --no-project --python 3.13 --with "pymupdf>=2.1,<3" --with pytest pytest 
 
 `-p no:warnings` hides PyMuPDF's SWIG deprecation warnings. The suite takes a few seconds.
 
+Every `uv run` names `--python 3.13`. PyMuPDF 2.1 pulls in onnxruntime, which has no wheels for the newest Python, so on a fresh machine uv picks Python 3.15 and the run fails before any plugin code starts. `tests/test_skill.py` checks every run command. PyMuPDF 1.28 has no add-ons and passes the whole suite, but Julian kept 2.1 on 2026-11-10. To check a fresh machine, set `UV_PYTHON_INSTALL_DIR` and `UV_CACHE_DIR` to empty folders and `UV_PYTHON_PREFERENCE=only-managed`, then run the skill's command.
+
 The two live conversion tests drive PowerPoint and Keynote, so they run only with `SLIDE_HANDOUTS_LIVE=1`, on a Mac, with a person at the screen. PowerPoint asks to grant access to each new folder (click Select, then Grant), and Keynote can wait with no visible prompt.
+
+`tests/test_convert.py` compiles both AppleScripts with `osacompile` on a Mac. A reserved word (`before`) once broke both scripts while every text check passed.
 
 ## Rebuild the gallery
 
@@ -55,6 +59,17 @@ It rebuilds every image in `assets/examples/` from a made-up 12-slide deck. Open
 - Import it as `pymupdf`, never `fitz`.
 - Write a page's text before you place slides on it. Once a placed slide holds a font named `helv`, `insert_text` adds no font to the page, and the text renders in a fallback font.
 
+## Notes styles
+
+`--style lines` draws solid lines, 0.5 pt at 27% black. `--style dotted` draws rows of dots an eighth of the spacing apart, and `--style dots` a square dot grid, both 0.6 pt round dots at 75% black. Each dotted row is one dashed stroke with a dash period equal to the step and round caps, as Illustrator draws a dotted stroke, so a 600-slide dot grid builds in about 4 seconds. The skill asks notes style with four choices and then "solid or dotted" for lines, because AskUserQuestion shows at most four choices.
+
+## Testing an install
+
+- A local folder added with `/plugin marketplace add <path>` is copied whole into `~/.claude/plugins/cache`, git-ignored files included, and `${CLAUDE_PLUGIN_ROOT}` can point at the folder itself. Test the published plugin with `claude plugin install slide-handouts@loadout` instead.
+- Read the test session's log in `~/.claude/projects/<folder>/` to check that Claude called `slide-handouts:handouts`. Without the plugin installed, Claude can find the repo on disk and run the script by hand, which looks the same in the chat.
+- In the desktop app, `/plugin` opens Settings, Customize, Plugins, and does not run the command's arguments. Add, then Add marketplace, then Add from a repository, takes `owner/repo`.
+- Users get an update only when `version` in `plugin.json` changes. Third-party marketplaces do not auto-update by default.
+
 ## Release checklist
 
 1. Bump the version in `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` together.
@@ -62,4 +77,6 @@ It rebuilds every image in `assets/examples/` from a made-up 12-slide deck. Open
 3. Rebuild the gallery and look at every image.
 4. Run the whole test suite.
 5. Tag the release as `vX.Y.Z`.
-6. Update the plugin's entry in the `outfit` and `ai-loadout` catalogues in lockstep: the same entry, in the same position, with each README table matching its `marketplace.json`.
+6. Update the plugin's entry in the `outfit` and `ai-loadout` catalogues in lockstep: the same entry, in the same position, with each README table matching its `marketplace.json`. The entry sits after `short-io`, the last of Julian's own plugins. Run `claude plugin validate .` in each catalogue before committing.
+
+v0.1.0 shipped on 2026-11-10: tag `v0.1.0`, listed in loadout and outfit (juliandickie/ai-loadout#1 and juliandickie/outfit#1).
